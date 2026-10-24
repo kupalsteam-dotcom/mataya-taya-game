@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Play - Mataya-Taya</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url("bg.png") center center / cover no-repeat #0f0f1c;
+    font-family: 'Press Start 2P', cursive;
+    overflow: auto;
+  }
+
+  /* === MAIN WRAPPER === */
+  .howto-wrapper {
+    width: 92%;
+    max-width: 58em;
+    background: rgba(16, 16, 32, 0.88);
+    border: 4px solid #ffcc00;
+    box-shadow: 0 0 8px #ffcc00, 0 0 15px #ff6600, 0 0 25px #ff3300;
+    padding: clamp(15px, 3vw, 30px);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    border-radius: 10px;
+    margin: 40px 0;
+    animation: flicker 2s infinite alternate, neonGlowOuter 3s infinite alternate;
+  }
+
+  /* === TITLE === */
+  .title {
+    font-size: clamp(16px, 2.5vw, 30px);
+    color: #ffcc00;
+    text-align: center;
+    margin-bottom: 25px;
+    text-shadow: 2px 2px #000, 0 0 10px #ff6600;
+    animation: glow 1.5s infinite alternate;
+  }
+
+  /* === CONTENT === */
+  .content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: clamp(15px, 3vw, 25px);
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  /* === INSTRUCTIONS === */
+  .instructions {
+    flex: 2;
+    background: rgba(0,0,0,0.7);
+    border: 3px solid #fff;
+    padding: clamp(15px, 2vw, 25px);
+    font-size: clamp(9px, 1.4vw, 14px);
+    line-height: 1.9;
+    overflow-y: auto;
+    box-shadow: inset 0 0 12px #ffcc00;
+    border-radius: 10px;
+    max-height: 60vh;
+  }
+
+  /* === KEYBOARD BOX === */
+  .keyboard {
+    flex: 1;
+    background: rgba(16,16,32,0.9);
+    border: 3px solid #ffcc00;
+    border-radius: 10px;
+    padding: clamp(10px, 2vw, 20px);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    box-shadow: inset 0 0 8px #ffcc00;
+    text-align: center;
+  }
+
+  .key-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 5px 0;
+  }
+
+  .key {
+    width: clamp(35px, 6vw, 50px);
+    height: clamp(35px, 6vw, 50px);
+    background: #111;
+    border: 3px solid #ffcc00;
+    margin: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffcc00;
+    font-size: clamp(10px, 2vw, 18px);
+    text-shadow: 1px 1px #000;
+    box-shadow: 0 0 5px #ffcc00, inset 0 0 2px #ffcc00;
+    border-radius: 8px;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+
+  .key.active {
+    background: #ffcc00;
+    color: #000;
+    transform: scale(0.9);
+    box-shadow: 0 0 8px #ffcc00, inset 0 0 6px #000;
+  }
+
+  .back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: clamp(45px, 6vw, 70px);
+    height: clamp(45px, 6vw, 70px);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    filter: drop-shadow(0 0 6px #000);
+    z-index: 5;
+  }
+
+  .back-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+  }
+
+  .back-btn:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 10px #ffcc00);
+  }
+
+  /* === ANIMATIONS === */
+  @keyframes glow {
+    from { text-shadow: 2px 2px #000, 0 0 8px #ff6600; }
+    to { text-shadow: 2px 2px #000, 0 0 16px #ff0000; }
+  }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.98; }
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 900px) {
+    .content {
+      flex-direction: column;
+      align-items: center;
+    }
+    .keyboard {
+      width: 100%;
+    }
+    .instructions {
+      width: 100%;
+      max-height: 50vh;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .title { font-size: clamp(14px, 5vw, 22px); }
+    .key { width: 40px; height: 40px; font-size: 12px; }
+  }
+ .controls-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    align-items: start;
+    justify-items: center;
+    width: 100%;
+  }
+
+  .keyboard-box, .mobile-box {
+    background: rgba(16,16,32,0.9);
+    border: 3px solid #ffcc00;
+    box-shadow: 0 0 10px #ffcc00, inset 0 0 10px #ffcc00;
+    border-radius: 10px;
+    padding: clamp(10px, 2vw, 20px);
+    text-align: center;
+    color: #fff;
+    font-size: clamp(9px, 1.3vw, 14px);
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .keyboard-box h3, .mobile-box h3 {
+    color: #ffcc00;
+    text-shadow: 1px 1px #000, 0 0 8px #ff6600;
+    font-size: clamp(10px, 1.5vw, 16px);
+    margin-bottom: 15px;
+  }
+
+  .key-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 5px 0;
+  }
+
+  .key {
+    width: clamp(30px, 5vw, 45px);
+    height: clamp(30px, 5vw, 45px);
+    background: #000;
+    border: 3px solid #ffcc00;
+    border-radius: 5px;
+    color: #ffcc00;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(10px, 1.5vw, 16px);
+    box-shadow: inset 0 0 4px #ffcc00, 0 0 6px #ffcc00;
+  }
+
+  @media (max-width: 800px) {
+    .controls-container {
+      grid-template-columns: 1fr;
+    }
+
+    .keyboard-box, .mobile-box {
+      max-width: 320px;
+    }
+  }
+</style>
+</head>
+
+<body>
+<div class="howto-wrapper">
+  <div class="back-btn" onclick="location.href='index.html'">
+    <img src="back.png" alt="Back">
+  </div>
+
+  <div class="title">HOW THE GAME WORKS</div>
+
+  <div class="content">
+  <!-- LEFT: Instructions -->
+  <div class="instructions">
+    <p>Welcome to <span style="color:#ffcc00;">Mataya-Taya</span>! 🕹️</p>
+    <p><strong>Step 1:</strong> Start the game and choose your <strong>map</strong> from the selection screen.</p>
+    <p><strong>Step 2:</strong> Choose your <strong>character</strong> after selecting the map.</p>
+    <p><strong>Step 3:</strong> Click <strong>"Play"</strong> to start the game.</p>
+    <p><strong>Step 4:</strong> Watch for the red marker — it shows who is currently <strong>"TAYA"</strong>.</p>
+    <p><strong>Step 5:</strong> Avoid being tagged. If tagged, you get marked with the red indicator.</p>
+    <p><strong>Step 6:</strong> The game ends when all players are tagged.</p>
+    <p><strong>Step 7:</strong> To change your character, click <strong>Settings</strong> and select again, then play.</p>
+    <p>Remember: Stay untagged as long as possible and have fun!</p>
+  </div>
+
+  <!-- RIGHT: Controls Section -->
+  <div class="controls-container">
+    <!-- Keyboard Controls -->
+    <div class="keyboard-box">
+      <h3>Keyboard Controls</h3>
+      <div class="key-row">
+        <div class="key"></div>
+        <div class="key" id="keyW">W</div>
+        <div class="key"></div>
+      </div>
+      <div class="key-row">
+        <div class="key" id="keyA">A</div>
+        <div class="key" id="keyS">S</div>
+        <div class="key" id="keyD">D</div>
+      </div>
+      <p>Use these keys to move your character</p>
+      <div class="key-row" style="margin-top:15px;">
+        <div class="key" id="keySPACE">⎵</div>
+        <div class="key" id="keyE">E</div>
+      </div>
+     <p>
+  <strong>Space</strong> = Turbo <br>
+  <br>
+  <strong>E</strong> = Invisible
+</p>
+    </div>
+
+    <!-- Mobile Controls -->
+    <div class="mobile-box">
+      <h3>Mobile Controls</h3>
+      <p>Use the on-screen <strong>arrows</strong> to move.</p>
+      <p>Tap the <strong>Turbo Button</strong> for speed boost.</p>
+      <p>Tap the <strong>Invisible Button</strong> to hide.</p>
+    </div>
+  </div>
+</div>
+<script>
+const keys = ['W','A','S','D','SPACE','E'];
+
+document.addEventListener('keydown', e => {
+  const key = e.key.toUpperCase();
+  if (key === ' ') document.getElementById('keySPACE').classList.add('active');
+  else if (key === 'E') document.getElementById('keyE').classList.add('active');
+  else if (keys.includes(key)) document.getElementById('key'+key).classList.add('active');
+});
+
+document.addEventListener('keyup', e => {
+  const key = e.key.toUpperCase();
+  if (key === ' ') document.getElementById('keySPACE').classList.remove('active');
+  else if (key === 'E') document.getElementById('keyE').classList.remove('active');
+  else if (keys.includes(key)) document.getElementById('key'+key).classList.remove('active');
+});
+</script>
+</body>
+</html>

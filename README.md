@@ -1,6 +1,7 @@
 🕹️ Mataya-Taya
 
-A fun and interactive tag game featuring character and map selection, AI taggers, and smooth controls. Stay untagged for as long as possible — and have fun!
+A fun and interactive tag game featuring character and map selection, AI taggers, and smooth controls.
+Stay untagged for as long as possible — and have fun!
 
 ✨ Features
 
@@ -12,7 +13,12 @@ A fun and interactive tag game featuring character and map selection, AI taggers
 
 🤖 AI Tagger — smart CPU players that can tag or be tagged.
 
-🎮 Controls Action Key Move Up W Move Down S Move Left A Move Right D
+🎮 Controls
+Action	Key
+Move Up	W
+Move Down	S
+Move Left	A
+Move Right	D
 
 🚀 How to Play
 

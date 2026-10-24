@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mataya-Taya Game</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  font-family: 'Press Start 2P', cursive;
+}
+canvas {
+  width: 100vw;
+  height: 100vh;
+  border: 4px solid #ffcc00;
+  image-rendering: pixelated;
+  background: #000;
+  box-shadow: 0 0 20px #ffcc00;
+  animation: glow 2s infinite alternate;
+}
+@keyframes glow {
+  from { box-shadow: 0 0 15px #ffcc00; }
+  to { box-shadow: 0 0 40px #ffcc00; }
+}
+
+/* --- Settings Button (Bigger Version) --- */
+#settingsBtn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 70px;   /* increased size for better visibility */
+  height: 70px;
+  cursor: pointer;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 8px #ffcc00);
+  transition: transform 0.2s ease, filter 0.2s ease;
+  z-index: 5;
+}
+
+#settingsBtn:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 15px #ffcc00);
+}
+
+/* --- Settings Modal --- */
+#settingsModal {
+  position: fixed;
+  top: 0; 
+  left: 0;
+  width: 100%; 
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+  z-index: 20;
+}
+
+/* --- Settings Content Box (Retro Pixel Art Style) --- */
+#settingsContent {
+  position: relative;
+  background: repeating-linear-gradient(
+    to bottom,
+    #000 0px,
+    #000 2px,
+    #0a0a0a 3px
+  ); /* subtle CRT scanline pattern */
+  padding: 40px;
+  border: 6px solid #ffcc00;
+  text-align: center;
+  box-shadow:
+    0 0 15px #ffcc00,
+    inset 0 0 8px #663300,
+    0 0 30px #ff6600 inset;
+  color: #ffcc00;
+  font-family: 'Press Start 2P', cursive;
+   border-radius: 20px;
+  width: 400px;
+  max-width: 90%;
+  image-rendering: pixelated;
+  transform: scale(1);
+  transition: transform 0.2s ease;
+}
+
+#settingsContent::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 4px dashed #ff6600;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* --- Settings Title (Retro Glow) --- */
+#settingsContent h1 {
+  font-size: 22px;
+  margin-bottom: 25px;
+  color: #ff4444;
+  text-shadow:
+    2px 2px 0 #000,
+    -2px -2px 0 #000,
+    0 0 8px #ff0000,
+    0 0 16px #ff6600;
+  letter-spacing: 2px;
+}
+
+/* --- Settings Buttons (Pixel Art Style) --- */
+#settingsContent button {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    #111 0px,
+    #111 2px,
+    #1a1a1a 3px
+  );
+  border: 3px solid #ffcc00;
+  color: #ffcc00;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-radius: 0; /* pixel-style corners */
+  box-shadow: 0 0 8px #ffcc00;
+  image-rendering: pixelated;
+}
+
+#settingsContent button:hover {
+  background: #ffcc00;
+  color: #000;
+  box-shadow: 0 0 15px #ffcc00, 0 0 30px #ff6600;
+  transform: translateY(-2px);
+}
+
+/* --- Retro Flicker Effect (optional aesthetic) --- */
+@keyframes retroFlicker {
+  0%, 100% { opacity: 1; }
+  95% { opacity: 0.85; }
+  97% { opacity: 0.9; }
+  99% { opacity: 0.7; }
+}
+#settingsContent {
+  animation: retroFlicker 2s infinite steps(2, end);
+}
+
+
+#countdown {
+  position: absolute;
+  top: 40%;
+  font-size: 48px;
+  color: #ffcc00;
+  text-shadow: 2px 2px 4px #000;
+  animation: pop 1s ease infinite;
+}
+@keyframes pop {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(1.5); opacity: 0.6; }
+}
+/* === RETRO MODAL OVERLAY === */
+.retroModal {
+  position: fixed; 
+  top: 0; 
+  left: 0;
+  width: 100%; 
+  height: 100%;
+  background: rgba(0,0,0,0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+  z-index: 1000;
+  animation: fadeInBg 0.3s ease-in-out;
+}
+
+/* === RETRO CONTENT BOX === */
+.retroContent {
+  position: relative;
+  background: #000;
+  padding: 50px 40px;
+  border: 6px solid #ffcc00;
+  text-align: center;
+  color: #ffcc00;
+  font-family: 'Press Start 2P', cursive;
+  box-shadow: 
+    0 0 20px #ffcc00, 
+    inset 0 0 15px #663300, 
+    0 0 40px #ff6600;
+  border-radius: 20px;
+  width: 420px;
+  max-width: 90%;
+  text-transform: uppercase;
+  animation: popIn 0.3s ease-in-out;
+}
+
+/* === SCANLINE EFFECT === */
+.retroContent::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: repeating-linear-gradient(
+    transparent 0px,
+    rgba(255,255,255,0.05) 2px,
+    transparent 4px
+  );
+  pointer-events: none;
+}
+
+/* === RETRO HEADER === */
+.retroContent h1 {
+  font-size: 26px;
+  margin-bottom: 25px;
+  color: #ff3333;
+  text-shadow: 
+    2px 2px #000, 
+    -2px -2px #000, 
+    0 0 10px #ff0000,
+    0 0 20px #ff6600;
+  animation: flicker 1.5s infinite alternate;
+}
+
+/* === RETRO BUTTONS === */
+.retroBtn {
+  display: block;
+  margin: 20px auto;
+  padding: 18px 30px;
+  font-size: 14px;
+  background: #111;
+  color: #ffcc00;
+  border: 4px solid #ffcc00;
+  cursor: pointer;
+  border-radius: 0px;
+  text-transform: uppercase;
+  font-family: 'Press Start 2P', cursive;
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0 0 10px #ffcc00;
+}
+
+.retroBtn:hover {
+  background: #ffcc00;
+  color: #000;
+  box-shadow: 0 0 25px #ffcc00, 0 0 50px #ffaa00;
+  transform: scale(1.08);
+}
+
+/* === ANIMATIONS === */
+@keyframes flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInBg {
+  from { background: rgba(0,0,0,0); }
+  to { background: rgba(0,0,0,0.95); }
+}
+
+
+/* 🎮 MOBILE CONTROLS (HIDDEN ON PC) */
+#mobileControls {
+  position: fixed;
+  bottom: 25px;
+  left: 25px; /* bottom-left corner */
+  display: none; /* Hidden on PC by default */
+  flex-direction: column;
+  align-items: center;
+  gap: 2px; /* very tight vertical spacing */
+  z-index: 9999; /* Always on top of the game canvas */
+  touch-action: none; /* Prevents double tap zoom or scrolling while pressing */
+}
+
+#mobileControls .mid {
+  display: flex;
+  gap: 30px; /* more space between left and right buttons */
+}
+
+.control-btn {
+  width: 35px; /* button size */
+  height: 35px;
+  font-size: 25px;
+  color: #ffffff;
+  background: transparent; /* fully transparent */
+  border: 2px solid rgba(255, 204, 0, 0.8); /* visible border */
+  border-radius: 50%; /* circular */
+  text-align: center;
+  line-height: 25px; /* vertically center the text */
+  font-family: 'Press Start 2P', cursive;
+  user-select: none;
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.6); /* glowing effect */
+  transition: transform 0.1s ease, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.control-btn:active {
+  transform: scale(0.9);
+  box-shadow: 0 0 20px rgba(255, 170, 0, 0.8);
+}
+
+
+/* ✅ Show controller only on mobile screens */
+@media screen and (max-width: 900px) {
+  #mobileControls {
+    display: flex !important;
+  }
+}
+/* ⚡ Turbo Button (for mobile) */
+#turboBtn {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffcc00 0%, #ff6600 100%);
+  border: 3px solid #fff;
+  box-shadow: 0 0 20px #ffcc00;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 22px;
+  color: #000;
+  cursor: pointer;
+  z-index: 9999;
+  display: none;
+}
+#turboBtn:disabled {
+  background: gray;
+  box-shadow: none;
+  color: #333;
+}
+
+/* Splash effect */
+@keyframes turboSplash {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+#splashEffect {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border: 4px solid #ffae00; /* changed to yellow-orange */
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 10;
+  transform: scale(1);
+  box-shadow: 0 0 20px #ffcc00; /* added soft yellow-orange glow */
+}
+
+@media screen and (max-width: 900px) {
+  #turboBtn { display: block; } /* show only on mobile */
+}
+@keyframes turboSplash {
+  0% { 
+    transform: scale(1); 
+    opacity: 1; 
+    box-shadow: 0 0 20px #ffae00; /* yellow-orange */
+  }
+  100% { 
+    transform: scale(2); 
+    opacity: 0; 
+    box-shadow: 0 0 50px #ffcc00; /* bright yellow-orange glow */
+  }
+}
+
+@keyframes lightSplash {
+  0% { 
+    transform: scale(0.5); 
+    opacity: 0.6; 
+    box-shadow: 0 0 15px #ffae00; /* yellow-orange */
+  }
+  100% { 
+    transform: scale(1.5); 
+    opacity: 0; 
+    box-shadow: 0 0 40px #ffcc00; /* brighter yellow-orange glow */
+  }
+}
+  /* Show only on mobile devices */
+  @media (max-width: 768px) {
+    #invisibleBtn {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+</style>
+</head>
+<body>
+<canvas id="gameCanvas" width="900" height="500"></canvas>
+<div id="countdown"></div>
+
+<!-- ⚙️ SETTINGS BUTTON -->
+<img id="settingsBtn" src="setting.png" alt="Settings">
+
+<!-- ⚙️ SETTINGS MODAL -->
+<div id="settingsModal">
+  <div id="settingsContent">
+    <h1>SETTINGS</h1>
+    <button id="changeCharacterBtn" class="retroBtn">CHANGE CHARACTER</button>
+    <button id="quitBtn" class="retroBtn">QUIT GAME</button>
+  </div>
+</div>
+
+<!-- Game Over Modal -->
+<div id="gameOverModal" class="retroModal">
+  <div id="gameOverContent" class="retroContent">
+    <h1>GAME OVER!</h1>
+    <button id="restartBtn" class="retroBtn">PLAY AGAIN</button>
+  </div>
+</div>
+
+<div id="splashEffect"></div>
+<button id="turboBtn">⚡</button>
+
+<!-- Invisibility Button (mobile only) -->
+<button id="invisibleBtn" style="
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  border: 3px solid #fff;
+  z-index: 99;
+  display: none; /* hidden by default */
+  padding: 0;
+  overflow: hidden;
+">
+  <img src="invisible.png" alt="Invisible Icon" style="
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+    filter: brightness(0) invert(1); /* makes it white */
+  ">
+</button>
+
+<!-- 🎮 MOBILE CONTROLLER -->
+<div id="mobileControls">
+  <div class="control-btn up" data-dir="up">▲</div>
+  <div class="mid">
+    <div class="control-btn left" data-dir="left">◀</div>
+    <div class="control-btn right" data-dir="right">▶</div>
+  </div>
+  <div class="control-btn down" data-dir="down">▼</div>
+</div>
+<script>
+function getQueryParams() {
+  const params = {};
+  window.location.search.substring(1).split("&").forEach(pair => {
+    const [key, value] = pair.split("=");
+    if (key) params[key] = decodeURIComponent(value);
+  });
+  return params;
+}
+const params = getQueryParams();
+
+// === CHARACTER FILES ===
+const characterFiles = ['1.png','2.png','3.png','4.png','5.png','6.png','7.png','8.png'];
+
+// === MAP SELECTION / PERSISTENCE ===
+let storedMap = localStorage.getItem("selectedMap");
+let urlMap = params.map;
+
+let selectedMap;
+if (urlMap) {
+  selectedMap = urlMap;
+  localStorage.setItem("selectedMap", selectedMap);
+} else if (storedMap) {
+  selectedMap = storedMap;
+} else {
+  alert("No map selected! Please go back and choose a map first.");
+  window.location.href = "map.html";
+}
+
+// === CHARACTER SELECTION / PERSISTENCE ===
+let storedChar = localStorage.getItem("selectedCharacter");
+let urlChar = params.img;
+
+let playerImageSrc;
+if (urlChar) {
+  playerImageSrc = urlChar;
+  localStorage.setItem("selectedCharacter", playerImageSrc);
+} else if (storedChar) {
+  playerImageSrc = storedChar;
+} else {
+  playerImageSrc = characterFiles[0];
+  localStorage.setItem("selectedCharacter", playerImageSrc);
+}
+
+// === LOAD MAP IMAGE ===
+const mapImage = new Image();
+mapImage.src = selectedMap;
+let mapLoaded = false;
+mapImage.onload = () => { mapLoaded = true; };
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+// Sprites
+const playerSprite = new Image();
+playerSprite.src = playerImageSrc;
+const aiCharacterFiles = characterFiles.filter(f => f !== playerImageSrc);
+const npcSprites = aiCharacterFiles.map(src => {
+  const img = new Image();
+  img.src = src;
+  return img;
+});
+
+const playerColumns = 4, playerRows = 4;
+const npcColumns = 4, npcRows = 4;
+
+let imagesLoaded = 0;
+const totalImages = npcSprites.length + 1;
+
+playerSprite.onload = () => {
+  playerSprite.frameW = Math.floor(playerSprite.width / playerColumns);
+  playerSprite.frameH = Math.floor(playerSprite.height / playerRows);
+  imagesLoaded++;
+  if (imagesLoaded >= totalImages) loop();
+};
+npcSprites.forEach(img => {
+  img.onload = () => {
+    img.frameW = Math.floor(img.width / npcColumns);
+    img.frameH = Math.floor(img.height / npcRows);
+    imagesLoaded++;
+    if (imagesLoaded >= totalImages) loop();
+  };
+});
+
+// === GAME STATE ===
+let players = [];
+const totalPlayers = 8;
+const playArea = { x: 0, y: 150, width: canvas.width, height: canvas.height - 150 };
+
+// NOTE: changed to let so Turbo can modify it
+let playerSpeed = 1.5;
+const aiChaseSpeed = 1.5;
+const aiRunSpeed = 1.5;
+const aiWanderSpeed = 1.5;
+
+const threatRange = 280;
+const separationDist = 60;
+const separationStrength = 0.6;
+
+let countdown = 3;
+let countdownDiv = document.getElementById("countdown");
+let countdownInterval = null;
+let gameStarted = false;
+let gameOver = false;
+
+const keys = {};
+document.addEventListener("keydown", e => keys[e.key.toLowerCase()] = true);
+document.addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
+
+// === ⚡ TURBO (SPLASH) FEATURE ===
+// === ⚡ TURBO FEATURE ===
+let turboActive = false;
+let turboCooldown = false;
+
+// Elements
+const turboBtn = document.getElementById("turboBtn");
+
+// ⚡ Create lightning icon element (always visible above the human player)
+const lightningIcon = document.createElement("img");
+lightningIcon.src = "turbo.png"; // <-- use your lightning image filename
+lightningIcon.id = "lightningIcon";
+lightningIcon.style.position = "absolute";
+lightningIcon.style.width = "60px";
+lightningIcon.style.height = "40px";
+lightningIcon.style.pointerEvents = "none";
+lightningIcon.style.transition = "filter 0.3s ease, opacity 0.3s ease";
+lightningIcon.style.filter = "drop-shadow(0 0 20px #ffae00) drop-shadow(0 0 40px #ffcc00)";
+lightningIcon.style.opacity = "1";
+lightningIcon.style.zIndex = "50";
+document.body.appendChild(lightningIcon);
+
+// === 🕶️ INVISIBILITY FEATURE ===
+let invisibleActive = false;
+let invisibleCooldown = false;
+
+// 🕶️ Create invisibility icon element (like Turbo lightning)
+const invisibilityIcon = document.createElement("img");
+invisibilityIcon.src = "invisible.png"; // <-- use your invisibility icon image
+invisibilityIcon.id = "invisibilityIcon";
+invisibilityIcon.style.position = "absolute";
+invisibilityIcon.style.width = "55px";
+invisibilityIcon.style.height = "40px";
+invisibilityIcon.style.pointerEvents = "none";
+invisibilityIcon.style.transition = "filter 0.3s ease, opacity 0.3s ease";
+invisibilityIcon.style.filter = "drop-shadow(0 0 20px #00ffff)";
+invisibilityIcon.style.opacity = "1";
+invisibilityIcon.style.zIndex = "50";
+document.body.appendChild(invisibilityIcon);
+
+// === ⚡ Turbo Activation Logic ===
+function activateTurbo() {
+  if (turboCooldown || turboActive || !players.length) return;
+  turboActive = true;
+  turboCooldown = true;
+
+  const boostMultiplier = 3;
+  const originalSpeed = playerSpeed;
+  playerSpeed *= boostMultiplier;
+
+  // ⚡ Glow bright when activated
+  lightningIcon.style.filter = "drop-shadow(0 0 25px #ffae00) drop-shadow(0 0 40px #ffcc00)";
+  lightningIcon.style.opacity = "1";
+
+  // End turbo after 3 seconds
+  setTimeout(() => {
+    playerSpeed = originalSpeed;
+    turboActive = false;
+
+    // dim icon during cooldown
+    lightningIcon.style.filter = "grayscale(1) brightness(0.4)";
+  }, 3000);
+
+  // Cooldown 10 seconds, then light up again
+  setTimeout(() => {
+    turboCooldown = false;
+    lightningIcon.style.filter = "drop-shadow(0 0 20px #ffcc00)";
+    lightningIcon.style.opacity = "1";
+  }, 10000);
+}
+
+function activateInvisibility() {
+  if (invisibleCooldown || invisibleActive || !players.length) return;
+  invisibleActive = true;
+  invisibleCooldown = true;
+
+  const player = players[0];
+  player.isInvisible = true;
+
+  // Icon visual
+  invisibilityIcon.style.filter = "drop-shadow(0 0 25px #00ffff)";
+  invisibilityIcon.style.opacity = "1";
+
+  // Duration of invisibility (visual + gameplay)
+  setTimeout(() => {
+    player.isInvisible = false;
+    invisibleActive = false;
+    invisibilityIcon.style.filter = "grayscale(1) brightness(0.4)";
+  }, 4000); // 4 seconds invisible
+
+  // Cooldown 12 seconds
+  setTimeout(() => {
+    invisibleCooldown = false;
+    invisibilityIcon.style.filter = "drop-shadow(0 0 20px #00ffff)";
+    invisibilityIcon.style.opacity = "1";
+  }, 12000);
+}
+
+
+// === ⚡🕶️ Combined Skill Icon Tracker ===
+function updateSkillIconsPosition() {
+  if (!players[0]) return;
+  const player = players[0];
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = rect.width / canvas.width;
+  const scaleY = rect.height / canvas.height;
+
+  // base head position
+  const headX = rect.left + (player.x + player.w / 2) * scaleX;
+  const headY = rect.top + (player.y - 25) * scaleY;
+
+  // ⚡ lightning (left)
+  lightningIcon.style.left = (headX - 45) + "px";
+  lightningIcon.style.top = headY + "px";
+
+  // 🕶️ invisibility (right)
+  invisibilityIcon.style.left = (headX + 5) + "px";
+  invisibilityIcon.style.top = headY + "px";
+}
+
+// Update every frame (~60fps)
+setInterval(updateSkillIconsPosition, 16);
+
+// === CONTROLS ===
+// ⚡ Spacebar (Turbo)
+document.addEventListener("keydown", e => {
+  if (e.code === "Space" && !turboCooldown && !turboActive && gameStarted && !gameOver) {
+    activateTurbo();
+  }
+});
+
+// ⚡ Mobile (Turbo Button)
+if (turboBtn) {
+  turboBtn.addEventListener("click", () => {
+    if (!turboCooldown && !turboActive && gameStarted && !gameOver) {
+      activateTurbo();
+    }
+  });
+}
+
+// 🕶️ "E" Key (Invisibility)
+document.addEventListener("keydown", e => {
+  if (e.key.toLowerCase() === "e" && !invisibleCooldown && !invisibleActive && gameStarted && !gameOver) {
+    activateInvisibility();
+  }
+});
+
+// 🕶️ Mobile Button
+const invisibleBtn = document.getElementById("invisibleBtn");
+if (invisibleBtn) {
+  invisibleBtn.addEventListener("click", () => {
+    if (!invisibleCooldown && !invisibleActive && gameStarted && !gameOver) {
+      activateInvisibility();
+    }
+  });
+}
+
+
+
+function initGame() {
+  players = [];
+  const shuffledAI = npcSprites.slice().sort(() => 0.5 - Math.random());
+
+  for (let i = 0; i < totalPlayers; i++) {
+    const sprite = (i === 0) ? playerSprite : shuffledAI[i - 1];
+    const charSize = 70;
+
+  players.push({
+  x: Math.random() * (playArea.width - charSize),
+  y: playArea.y + Math.random() * (playArea.height - charSize),
+  w: charSize, h: charSize,
+  isHuman: i === 0,
+  sprite,
+  frameX: 0, frameY: 0, frameCounter: 0,
+  vx: 0, vy: 0,
+  lastDir: 0,
+  wanderTimer: 0,
+  wanderDir: { x: 0, y: 0 },
+  isTagger: false,
+  flashTimer: 0,
+  isInvisible: false // ← initialize here
+});
+
+  }
+  players[Math.floor(Math.random() * players.length)].isTagger = true;
+
+  // reset control variables
+  countdown = 3;
+  gameStarted = false;
+  gameOver = false;
+  if (countdownDiv) countdownDiv.style.display = "block";
+  if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+  startCountdown();
+}
+
+function startCountdown() {
+  if (!countdownDiv) countdownDiv = document.getElementById("countdown");
+  countdown = 3;
+  countdownDiv.textContent = countdown;
+  countdownInterval = setInterval(() => {
+    countdownDiv.textContent = countdown > 0 ? countdown : "GO!";
+    if (countdown === 0) {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+      setTimeout(() => {
+        if (countdownDiv) countdownDiv.style.display = "none";
+        gameStarted = true;
+      }, 800);
+    }
+    countdown--;
+  }, 1000);
+}
+initGame(); // initial setup
+
+// === MODAL ELEMENTS & SAFE LISTENERS ===
+const gameOverModal = document.getElementById("gameOverModal");
+const playAgainBtn = document.getElementById("playAgainBtn");
+const quitGameBtn = document.getElementById("quitGameBtn");
+
+function resetGame() {
+  // hide modal
+  if (gameOverModal) gameOverModal.style.visibility = "hidden";
+
+  // re-init everything without a full reload
+  initGame();
+  // start loop if images already loaded
+  if (imagesLoaded >= totalImages) {
+    loop();
+  }
+}
+
+if (playAgainBtn) {
+  playAgainBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    resetGame();
+  });
+}
+if (quitGameBtn) {
+  quitGameBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.location.href = "index.html";
+  });
+}
+
+// helpers
+function clampToPlayArea(p) {
+  if (p.x < playArea.x) p.x = playArea.x;
+  if (p.y < playArea.y) p.y = playArea.y;
+  if (p.x > playArea.x + playArea.width - p.w) p.x = playArea.x + playArea.width - p.w;
+  if (p.y > playArea.y + playArea.height - p.h) p.y = playArea.y + playArea.height - p.h;
+}
+function normalize(x, y) {
+  const d = Math.hypot(x, y);
+  return d === 0 ? { x: 0, y: 0 } : { x: x / d, y: y / d };
+}
+function centerOf(p) { return { x: p.x + p.w / 2, y: p.y + p.h / 2 }; }
+
+function animate(p, maxFrames, isMoving) {
+  if (isMoving) {
+    p.frameCounter++;
+    if (p.frameCounter > 10) {
+      p.frameX = (p.frameX + 1) % maxFrames;
+      p.frameCounter = 0;
+    }
+  } else {
+    p.frameX = 0;
+    p.frameCounter = 0;
+  }
+}
+function update() {
+  if (!gameStarted || gameOver) return;
+
+  const p1 = players[0];
+  let moved = false;
+
+  // === HUMAN MOVEMENT ===
+  if (keys["w"]) { p1.y -= playerSpeed; p1.frameY = 3; p1.lastDir = 3; moved = true; }
+  if (keys["s"]) { p1.y += playerSpeed; p1.frameY = 0; p1.lastDir = 0; moved = true; }
+  if (keys["a"]) { p1.x -= playerSpeed; p1.frameY = 1; p1.lastDir = 1; moved = true; }
+  if (keys["d"]) { p1.x += playerSpeed; p1.frameY = 2; p1.lastDir = 2; moved = true; }
+
+  animate(p1, playerColumns, moved);
+  clampToPlayArea(p1);
+
+  // === AI MOVEMENT ===
+  for (let i = 1; i < players.length; i++) {
+    const ai = players[i];
+    const aiC = centerOf(ai);
+    let move = { x: 0, y: 0 };
+    let nearestTagger = null, nearestRunner = null;
+    let nearestTaggerDist = Infinity, nearestRunnerDist = Infinity;
+
+    for (const other of players) {
+      if (ai === other) continue;
+      const oC = centerOf(other);
+      const dx = oC.x - aiC.x, dy = oC.y - aiC.y;
+      const dist = Math.hypot(dx, dy);
+
+      if (other.isTagger && dist < nearestTaggerDist) {
+        nearestTaggerDist = dist; nearestTagger = other;
+      }
+      if (!other.isTagger && dist < nearestRunnerDist) {
+        nearestRunnerDist = dist; nearestRunner = other;
+      }
+    }
+
+    // === AI Behavior ===
+    if (ai.isTagger && nearestRunner) {
+      const dir = normalize(nearestRunner.x - ai.x, nearestRunner.y - ai.y);
+      move.x += dir.x * aiChaseSpeed;
+      move.y += dir.y * aiChaseSpeed;
+    } else if (!ai.isTagger && nearestTagger && nearestTaggerDist < threatRange) {
+      const dir = normalize(ai.x - nearestTagger.x, ai.y - nearestTagger.y);
+      move.x += dir.x * aiRunSpeed;
+      move.y += dir.y * aiRunSpeed;
+    } else {
+      // Wander mode
+      ai.wanderTimer--;
+      if (ai.wanderTimer <= 0) {
+        ai.wanderTimer = 60 + Math.random() * 60;
+        ai.wanderDir = normalize(Math.random() - 0.5, Math.random() - 0.5);
+      }
+      move.x += ai.wanderDir.x * aiWanderSpeed;
+      move.y += ai.wanderDir.y * aiWanderSpeed;
+    }
+
+    // === AVOID COLLISIONS ===
+    for (const other of players) {
+      if (ai === other) continue;
+      const dx = ai.x - other.x;
+      const dy = ai.y - other.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < separationDist && dist > 0) {
+        move.x += (dx / dist) * separationStrength;
+        move.y += (dy / dist) * separationStrength;
+      }
+    }
+
+    // === APPLY MOVEMENT ===
+    ai.x += move.x;
+    ai.y += move.y;
+    clampToPlayArea(ai);
+
+    // === SMOOTH SPRITE DIRECTION ===
+    const isMoving = Math.abs(move.x) > 0.2 || Math.abs(move.y) > 0.2;
+    if (isMoving) {
+      // Determine direction
+      if (Math.abs(move.x) > Math.abs(move.y)) {
+        ai.frameY = move.x > 0 ? 2 : 1; // right : left
+        ai.lastDir = ai.frameY;
+      } else {
+        ai.frameY = move.y > 0 ? 0 : 3; // down : up
+        ai.lastDir = ai.frameY;
+      }
+    } else {
+      // Idle — stay facing last direction
+      ai.frameY = ai.lastDir || 0;
+      ai.frameX = 0;
+    }
+
+    animate(ai, npcColumns, isMoving);
+  }
+
+// === TAGGING ===
+const touchRange = 40;
+for (const tagger of players.filter(p => p.isTagger)) {
+  for (const runner of players.filter(p => !p.isTagger)) {
+    if (runner.isInvisible) continue; // cannot tag invisible players
+    const dx = runner.x - tagger.x;
+    const dy = runner.y - tagger.y;
+    const distance = Math.hypot(dx, dy);
+    if (distance <= touchRange && tagger.flashTimer <= 0) {
+      runner.isTagger = true;
+      runner.flashTimer = 10;
+    }
+  }
+}
+
+
+
+  // === GAME OVER ===
+  if (players.every(p => p.isTagger)) {
+    gameOver = true;
+    if (gameOverModal) {
+      gameOverModal.style.visibility = "visible";
+    } else {
+      alert("Everyone is tagged! Game over!");
+    }
+  }
+}
+
+
+
+function drawArrowAbovePlayer(p) {
+  const arrowY = p.y - 10;
+  ctx.beginPath();
+  ctx.moveTo(p.x + p.w / 2 - 10, arrowY);
+  ctx.lineTo(p.x + p.w / 2 + 10, arrowY);
+  ctx.lineTo(p.x + p.w / 2, arrowY - 15);
+  ctx.closePath();
+  ctx.fillStyle = "red";
+  ctx.fill();
+}
+
+function draw() {
+  if (mapLoaded) ctx.drawImage(mapImage, 0, 0, canvas.width, canvas.height);
+  else { ctx.fillStyle = "#000"; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+
+  for (const p of players) {
+    const img = p.sprite;
+    const frameW = img.frameW || (img.width / 4);
+    const frameH = img.frameH || (img.height / 4);
+
+    // If player has flashTimer effect
+    if (p.flashTimer > 0) {
+      ctx.globalAlpha = 0.6;
+      p.flashTimer--;
+    } else {
+      ctx.globalAlpha = 1.0;
+    }
+
+    // If this is the human player and currently invisible, apply canvas filter + alpha
+    let prevFilter = ctx.filter || "none";
+    let prevAlpha = ctx.globalAlpha;
+    if (p.isHuman && p.isInvisible) {
+      ctx.filter = "grayscale(100%)";
+      ctx.globalAlpha = 0.35; // semi-transparent
+    }
+
+    ctx.drawImage(img,
+      p.frameX * frameW, p.frameY * frameH, frameW, frameH,
+      p.x, p.y, p.w, p.h);
+
+    // restore filter & alpha
+    ctx.filter = prevFilter;
+    ctx.globalAlpha = prevAlpha;
+
+    // draw arrow for taggers
+    if (p.isTagger) drawArrowAbovePlayer(p);
+  }
+
+  // ensure globalAlpha reset
+  ctx.globalAlpha = 1.0;
+}
+
+
+function loop() {
+  update();
+  draw();
+  if (!gameOver) requestAnimationFrame(loop);
+}
+
+// settings modal / controls
+const settingsBtn = document.getElementById("settingsBtn");
+const settingsModal = document.getElementById("settingsModal");
+const changeCharacterBtn = document.getElementById("changeCharacterBtn");
+const quitBtn = document.getElementById("quitBtn");
+
+if (settingsBtn) settingsBtn.addEventListener("click", () => settingsModal.style.visibility = "visible");
+if (settingsModal) settingsModal.addEventListener("click", (e) => { if (e.target === settingsModal) settingsModal.style.visibility = "hidden"; });
+
+if (changeCharacterBtn) changeCharacterBtn.addEventListener("click", () => {
+  const currentMap = localStorage.getItem("selectedMap") || selectedMap;
+  window.location.href = "characters.html?map=" + encodeURIComponent(currentMap);
+});
+if (quitBtn) quitBtn.addEventListener("click", () => {
+  window.location.href = "index.html";
+});
+
+const restartBtn = document.getElementById("restartBtn");
+if (restartBtn) restartBtn.addEventListener("click", () => resetGame());
+
+window.addEventListener("DOMContentLoaded", () => {
+
+// === MOBILE CONTROLS ===
+const mobileControls = document.getElementById("mobileControls");
+const buttons = document.querySelectorAll(".control-btn");
+
+buttons.forEach(btn => {
+  btn.addEventListener("touchstart", e => {
+    e.preventDefault();
+    const dir = btn.dataset.dir;
+    if (dir === "up") keys["w"] = true;
+    if (dir === "down") keys["s"] = true;
+    if (dir === "left") keys["a"] = true;
+    if (dir === "right") keys["d"] = true;
+  });
+
+  btn.addEventListener("touchend", e => {
+    e.preventDefault();
+    const dir = btn.dataset.dir;
+    if (dir === "up") keys["w"] = false;
+    if (dir === "down") keys["s"] = false;
+    if (dir === "left") keys["a"] = false;
+    if (dir === "right") keys["d"] = false;
+  });
+});
+});
+</script>
+
+</body>
+</html>
